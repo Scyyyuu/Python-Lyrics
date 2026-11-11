@@ -9,11 +9,11 @@ lyrics = [
 
 ]
 
-line_delays = [1, 1, 1, 1, 1]  # seconds to pause AFTER each line — adjust these by ear
+line_delays = [1, 1, 1, 1, 1]  
 
 for line, delay in zip(lyrics, line_delays):
     for letter in line:
         print(letter, end="", flush=True)
-        time.sleep(0.05)  # typing speed per letter — adjust to taste
-    print()  # move to a new line after the line finishes typing
-    time.sleep(delay)  # pause before the next line starts
+        time.sleep(0.05)  
+    print()  
+    time.sleep(delay)  
