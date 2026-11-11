@@ -7,12 +7,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 AUDIO_FILE = os.path.join(SCRIPT_DIR, "Totoong tayo.mp3")
 
 
-# ---------------------------------------------------------------------------
-# Fill in the actual lyric lines from "Totoong Tayo" (JIN) below.
-# Each tuple is (seconds_into_song, line_text).
-# The timestamps are spaced out as a rough placeholder verse/chorus rhythm —
-# adjust them to match where each line actually lands in the track.
-# ---------------------------------------------------------------------------
+
 LYRICS = [
     (0,   "Kitang kita na sa kilos mong kakaiba"),
     (7,   "Ooh, ako pa ba? ohhhhhhh"),
@@ -44,7 +39,7 @@ class LyricCard:
         self.win.geometry(f"{BOX_W}x{BOX_H}+{int(x)}+{int(y)}")
         self.win.resizable(False, False)
 
-        # White card needs a visible border since it blends into most desktops
+
         border = tk.Frame(self.win, bg="#CCCCCC", bd=0)
         border.pack(expand=True, fill="both", padx=1, pady=1)
         inner = tk.Frame(border, bg=BG_COLOR)
@@ -153,9 +148,6 @@ class LyricFloatApp:
         if self.next_lyric_idx < len(LYRICS) or self.boxes:
             self.root.after(16, self.tick)
         else:
-            # animation done — leave the song playing to the end;
-            # comment the next line back in if you want it to cut off here instead
-            # pygame.mixer.music.stop()
             pass
 
 if __name__ == "__main__":
