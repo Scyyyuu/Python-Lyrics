@@ -40,7 +40,7 @@ class LyricCard:
         self.win.geometry(f"{BOX_A}x{BOX_B}+{int(x)}+{int(y)}")
         self.win.resizable(False, False)
 
-        # White card needs a visible border since it blends into most desktops
+
         border = tk.Frame(self.win, bg="#CCCCCC", bd=0)
         border.pack(expand=True, fill="both", padx=1, pady=1)
         inner = tk.Frame(border, bg=BG_COLOR)
@@ -141,7 +141,6 @@ class LyricFloatApp:
                 try:
                     box.win.destroy()
                 except tk.TclError:
-                    pass
             else:
                 still_visible.append(box)
         self.boxes = still_visible
@@ -149,9 +148,6 @@ class LyricFloatApp:
         if self.next_lyric_idx < len(LYRICS) or self.boxes:
             self.root.after(16, self.tick)
         else:
-            # animation done — leave the song playing to the end;
-            # comment the next line back in if you want it to cut off here instead
-            # pygame.mixer.music.stop()
             pass
 
 if __name__ == "__main__":
