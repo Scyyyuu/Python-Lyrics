@@ -8,14 +8,12 @@ from PIL import Image, ImageTk, ImageSequence
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 AUDIO_FILE = os.path.join(SCRIPT_DIR, "Totoong tayo.mp3")
-IMAGE_FILE = os.path.join(SCRIPT_DIR, "cover.gif")  # change to your actual image/gif filename
-GIF_BOX_W, GIF_BOX_H = 300, 300  # size of the standalone gif box
-GIF_FALLBACK_FRAME_MS = 100  # used only if the gif doesn't specify its own frame speed
-GIF_GAP_CM = 0.5  # real-world distance between the lyric box column and the gif
+IMAGE_FILE = os.path.join(SCRIPT_DIR, "cover.gif")  
+GIF_BOX_W, GIF_BOX_H = 300, 300  
+GIF_FALLBACK_FRAME_MS = 100  
+GIF_GAP_CM = 0.5 
 
 def resolve_image_path():
-    """Use IMAGE_FILE if it exists; otherwise auto-detect any .gif sitting
-    next to the script, so a filename typo can't silently break the gif."""
     if os.path.exists(IMAGE_FILE):
         return IMAGE_FILE
     candidates = glob.glob(os.path.join(SCRIPT_DIR, "*.gif"))
@@ -25,13 +23,6 @@ def resolve_image_path():
     print(f"No gif found: checked '{IMAGE_FILE}' and no *.gif files exist in {SCRIPT_DIR}")
     return None
 
-
-# ---------------------------------------------------------------------------
-# Fill in the actual lyric lines from "Totoong Tayo" (JIN) below.
-# Each tuple is (seconds_into_song, line_text).
-# The timestamps are spaced out as a rough placeholder verse/chorus rhythm —
-# adjust them to match where each line actually lands in the track.
-# ---------------------------------------------------------------------------
 LYRICS = [
     (0,   "Kitang kita na sa kilos mong kakaiba"),
     (7,   "Ooh, ako pa ba? ohhhhhhh"),
@@ -53,7 +44,7 @@ BG_COLOR = "#FFFFFF"
 FG_COLOR = "#000000"
 RISE_SPEED = 100
 BOTTOM_SPAWN_OFFSET = 200
-FLASH_PERIOD_MS = 1000  # how long one full smooth pulse cycle takes (ms)
+FLASH_PERIOD_MS = 1000  
 
 class LyricCard:
     def __init__(self, parent, text, x, y):
@@ -64,7 +55,7 @@ class LyricCard:
         self.win.geometry(f"{BOX_W}x{BOX_H}+{int(x)}+{int(y)}")
         self.win.resizable(False, False)
 
-        # White card needs a visible border since it blends into most desktops
+
         self.border = tk.Frame(self.win, bg="#CCCCCC", bd=0)
         self.border.pack(expand=True, fill="both", padx=1, pady=1)
         self.inner = tk.Frame(self.border, bg=BG_COLOR)
@@ -105,19 +96,18 @@ class LyricCard:
     def flash(self):
         try:
             if not self.win.winfo_exists():
-                return  # card is gone (floated off / destroyed) — stop flashing
+                return  
         except tk.TclError:
             return
 
         elapsed = time.time() - self.flash_start
-        # smooth 0..1..0 pulse via sine, instead of a hard on/off toggle
         phase = (math.sin(2 * math.pi * elapsed / (FLASH_PERIOD_MS / 1000)) + 1) / 2
 
         bg = self._lerp_color(BG_COLOR, "#000000", phase)
         fg = self._lerp_color(FG_COLOR, "#FFFFFF", phase)
         self._set_colors(bg, fg)
 
-        self.win.after(16, self.flash)  # ~60fps, matches the rise animation's smoothness
+        self.win.after(16, self.flash)  
 
     @staticmethod
     def _lerp_color(c1, c2, t):
@@ -136,12 +126,10 @@ class LyricCard:
             self.content.configure(bg=bg)
             self.label.configure(bg=bg, fg=fg)
         except tk.TclError:
-            pass  # window may have already been destroyed mid-flash
+            pass  
 
 class GifBox:
-    """A single, persistent animated gif shown directly on screen (no card/
-    border around it). Created once, loops forever, and does not disappear
-    until the caller explicitly closes it (see close())."""
+
 
     def __init__(self, parent, x, y, w, h):
         self.w, self.h = w, h
@@ -184,7 +172,7 @@ class GifBox:
             self.gif_index = (self.gif_index + 1) % len(self.gif_frames)
             self.win.after(duration, self.animate)
         except tk.TclError:
-            pass  # window was closed mid-frame
+            pass  
 
     def close(self):
         self.closed = True
@@ -221,16 +209,12 @@ class LyricFloatApp:
 
     def start(self):
         self.root.iconify()
-
-        # One persistent gif box, created once, placed just left of where the
-        # left-side lyric boxes spawn — it stays up the whole time and is
-        # only closed once every lyric has finished (see tick()).
         center_x = self.screen_w // 2
         left_box_left_edge = center_x - (BOX_W + 60)
         gap_px = int(self.root.winfo_fpixels(f"{GIF_GAP_CM}c"))
 
         gif_x = left_box_left_edge - GIF_BOX_W - gap_px
-        gif_x = max(gif_x, 10)  # never let it spawn off the left edge
+        gif_x = max(gif_x, 10)
 
         gif_y = self.screen_h - GIF_BOX_H - BOTTOM_SPAWN_OFFSET
         self.gif_box = GifBox(self.root, gif_x, gif_y, GIF_BOX_W, GIF_BOX_H)
@@ -283,12 +267,8 @@ class LyricFloatApp:
         if self.next_lyric_idx < len(LYRICS) or self.boxes:
             self.root.after(16, self.tick)
         else:
-            # every lyric has appeared and floated away — lyrics are over,
-            # so this is the moment the gif box is allowed to close
             self.gif_box.close()
-            # comment the next line back in if you also want the song to
-            # cut off at this exact moment instead of playing to the end
-            # pygame.mixer.music.stop()
+
 
 if __name__ == "__main__":
     root = tk.Tk()
